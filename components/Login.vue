@@ -135,7 +135,7 @@ export default {
           // Signed in
           const user = userCredential.user;
           console.log("sucess");
-          this.$router.replace("/admin");
+          this.$router.replace("/admin/tenants");
           // ...
         })
         .catch((error) => {
