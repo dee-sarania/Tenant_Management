@@ -60,16 +60,7 @@
                   </div>
                   <div v-else>-</div>
                 </div>
-                <div v-else-if="column.field == 'orderAction'">
-                  <div class="flex items-center">
-                    <img src="/tracking.svg" @click="UpdateHistory(p)" />
-                    <img
-                      class="ml-2"
-                      src="/show.svg"
-                      @click="showOrderDetails(p)"
-                    />
-                  </div>
-                </div>
+                <div v-else-if="column.field == 'orderAction'"></div>
                 <div v-else-if="column.type == 'boolean'">
                   <svg
                     v-if="getCellValue(p, column.field)"
