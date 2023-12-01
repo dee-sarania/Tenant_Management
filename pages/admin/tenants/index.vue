@@ -1,0 +1,244 @@
+<template>
+  <div class="flex main pb-20">
+    <ModalPopup
+      heading="Confirm"
+      :title="`Are you sure you want to delete this category?`"
+      primary-action-label="Yes, Delete"
+      cancel-label="Cancel"
+      :show.sync="showDeleteCategoryPopup"
+      @on-cancel="
+        showDeleteCategoryPopup = false;
+        activeID = '';
+      "
+      @primary-action="DeleteTenant"
+    ></ModalPopup>
+    <div class="w-full mt-10">
+      <div class="container flex justify-between items-center">
+        <div class="">
+          <p class="text-primary text-4xl font-black">Manage Tenants</p>
+        </div>
+        <div>
+          <Button title="+ Add New Tenant" @onBtnClick="onBtnClick" />
+        </div>
+      </div>
+      <div class="container">
+        <div class="flex justify-between items-center mt-16">
+          <p class="text-primary text-xl mt-2 font-bold">{{ count }} Tenants</p>
+          <div>
+            <div class="flex items-center">
+              <div class="relative">
+                <TextInput
+                  label=""
+                  :initial="search"
+                  placeholder="Search Products"
+                  @setValue="setSearchTerm"
+                  class="mr-3"
+                  @keyup.enter="searchMember"
+                /><svg
+                  v-if="search != ''"
+                  class="absolute w-6 h-6 cursor-pointer top-0 bottom-0 m-auto right-5"
+                  @click="clearSearchTerms"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </div>
+              <Button title="Search" @onBtnClick="searchMember" />
+            </div>
+          </div>
+        </div>
+        <MyTable
+          :columns="columns"
+          :data="data"
+          :limit="limit"
+          :offset="offset"
+          :count="count"
+          @onRowClick="goTo"
+          @onDelete="onDelete"
+          @onUpdate="onUpdate"
+          @pagination-clicked="paginationClicked"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import {
+  collection,
+  query,
+  doc,
+  startAfter,
+  getDocs,
+  limit,
+  deleteDoc,
+} from "firebase/firestore";
+import { useFirestore } from "vuefire";
+export default {
+  name: "my-component",
+  data() {
+    return {
+      limit: 20,
+      offset: 0,
+      activeID: "",
+      activeName: "",
+      count: 0,
+      search: "",
+      showCategoryPopup: false,
+      showDeleteCategoryPopup: false,
+      columns: [
+        {
+          label: "Name",
+          field: "name",
+          class: "capitalize",
+        },
+        {
+          label: "House No.",
+          field: "house_no",
+        },
+        {
+          label: "Phone Number",
+          field: "phone_number",
+        },
+        {
+          label: "Rent",
+          field: "rent",
+          prefix: "₹ ",
+        },
+        {
+          label: "Joined",
+          field: "started_date",
+          type: "datetime",
+          dateOutputFormat: "MMM DD, YYYY",
+          getRemaining: false,
+        },
+        {
+          label: "Action",
+          field: "action",
+        },
+      ],
+      active: "all",
+      data: [],
+    };
+  },
+  mounted() {
+    this.GetAllTenants(this.limit, this.offset);
+  },
+  methods: {
+    async GetAllTenants(pageSize, offset) {
+      this.data = [];
+      const _this = this;
+      const db = useFirestore();
+      const citiesCollection = collection(db, "tenants");
+
+      // Initial query to get the first page
+      const initialQuery = query(citiesCollection, limit(pageSize));
+
+      // Perform the initial query
+      getDocs(initialQuery)
+        .then((querySnapshot) => {
+          console.log(querySnapshot);
+          if (querySnapshot.empty) {
+            return;
+          }
+          // Process the documents from the initial query
+          querySnapshot.forEach((doc) => {
+            let data = doc.data();
+            data.id = doc.id;
+            _this.data.push(data);
+          });
+
+          // Get the last document from the initial query to use as a starting point for the next page
+          const lastDocument =
+            querySnapshot.docs[querySnapshot.docs.length - 1];
+
+          // Use startAfter to get the next page
+          const nextPageQuery = query(
+            citiesCollection,
+            startAfter(lastDocument),
+            limit(pageSize)
+          );
+
+          // Perform the next page query
+          return getDocs(nextPageQuery);
+        })
+        // .then((nextPageSnapshot) => {
+        //   // Process the documents from the next page query
+        //   nextPageSnapshot.forEach((doc) => {
+        //     // Your logic to handle each document on the next page
+        //     console.log(doc.id, " => ", doc.data());
+        //   });
+        // })
+        .catch((error) => {
+          console.error("Error getting documents: ", error);
+        });
+
+      //   this.offset = offset;
+      //   const { data, error } = await useApi(
+      //     `/v1/products/all/?limit=${limit}&offset=${offset * limit}&search=${
+      //       this.search
+      //     }`,
+      //     {
+      //       method: "get",
+      //     }
+      //   );
+      //   if (error.value != null) {
+      //     console.error(error);
+      //   } else {
+      //     this.data = data.value.results;
+      //     this.count = data.value.count;
+      //   }
+    },
+    async DeleteTenant() {
+      const db = useFirestore();
+      console.log(this.activeID);
+      await deleteDoc(doc(db, "tenants", this.activeID));
+      this.showDeleteCategoryPopup = false;
+      this.GetAllTenants(this.limit, this.offset);
+    },
+    onBtnClick() {
+      this.$router.push("/admin/tenants/add");
+    },
+    refresh() {
+      this.GetAllTenants(this.limit, this.offset);
+    },
+    onCancelConfirm() {
+      this.showCategoryPopup = false;
+    },
+    onUpdate(id) {
+      this.$router.push(`/admin/tenants/edit/${id}/`);
+    },
+    paginationClicked(data) {
+      console.log(data);
+      this.GetAllTenants(this.limit, data);
+    },
+    setSearchTerm(data) {
+      this.search = data.value;
+    },
+    searchMember() {
+      this.GetAllTenants(this.limit, this.offset);
+    },
+    clearSearchTerms() {
+      this.search = "";
+      this.GetAllTenants(this.limit, this.offset);
+    },
+    goTo(data) {
+      console.log(data);
+      this.$router.push(`/admin/tenants/edit/${data.data.id}`);
+    },
+    onDelete(id) {
+      this.activeID = id;
+      this.showDeleteCategoryPopup = true;
+    },
+  },
+};
+</script>

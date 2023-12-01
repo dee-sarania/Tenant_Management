@@ -2,10 +2,6 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-  devServer: {
-    port: 3001,
-  },
-
   vite: {
     // @ts-ignore
     ssr: { noExternal: ["moment"] },
@@ -13,7 +9,8 @@ export default defineNuxtConfig({
 
   // css: ["vue-toast-notification/dist/theme-default.css"],
 
-  modules: ["@nuxtjs/tailwindcss"],
+  modules: ["@nuxtjs/tailwindcss", "nuxt-vuefire"],
+  css: ["vue-toast-notification/dist/theme-default.css"],
   app: {
     pageTransition: { name: "page", mode: "out-in" },
     head: {
@@ -34,14 +31,17 @@ export default defineNuxtConfig({
       ],
     },
   },
-
-  runtimeConfig: {
-    public: {
-      FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
-      baseURL:
-        process.env.NODE_ENV == "development"
-          ? "http://localhost:8000"
-          : process.env.BASE_URL,
+  vuefire: {
+    auth: {
+      enabled: true,
+    },
+    config: {
+      apiKey: "AIzaSyCiIyOYcT5KkcfJ_Vv6x8FT1KHne9diXeI",
+      authDomain: "rentease-a00ae.firebaseapp.com",
+      projectId: "rentease-a00ae",
+      storageBucket: "rentease-a00ae.appspot.com",
+      messagingSenderId: "448116008743",
+      appId: "1:448116008743:web:a65acd4964395e65ac6b02",
     },
   },
 });

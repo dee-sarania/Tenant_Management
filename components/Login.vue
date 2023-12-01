@@ -30,7 +30,7 @@
                   name="phoneNumber"
                   type="tel"
                   required
-                  v-model="phoneNumber"
+                  v-model="email"
                   class="border-gray-300 placeholder-gray-500 appearance-none rounded-lg relative block w-full px-4 py-6 bg-gray-300 text-gray-900 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 text-lg sm:leading-5"
                   placeholder="Phone Number"
                   value
@@ -111,10 +111,11 @@
 </template>
 
 <script>
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 export default {
   data() {
     return {
-      phoneNumber: "",
+      email: "",
       password: "",
       visible: false,
       isErrorOrSuccess: "",
@@ -128,6 +129,21 @@ export default {
 
   methods: {
     async authenticate() {
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log("sucess");
+          this.$router.replace("/admin");
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
+    },
+    async authenticateRest() {
       console.log("auth");
       var payload = {
         phone_number: this.phoneNumber,

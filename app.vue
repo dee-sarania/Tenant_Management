@@ -1,28 +1,11 @@
 <template>
   <div>
+    <Sidebar v-show="$route.name != 'index'" />
     <NuxtPage />
     <!-- <button class="button"> click me</button> -->
     <!-- <button class="button" @click="signOut"> Sign out</button> -->
   </div>
 </template>
-
-<script setup>
-//import { signOut } from 'firebase/auth';
-
-console.log("---APP---");
-
-onMounted(async () => {
-  const email = "xyz@abc.com";
-  const password = "123456";
-  const credentials = await createUser(email, password);
-  console.log("Credentials:", credentials);
-
-  // const email = "xyz@abc.com"
-  // const password= "123456"
-  // const credentials = await signInUser(email, password)
-  // console.log('Credentials:', credentials);
-});
-</script>
 
 <style>
 :root {
@@ -33,7 +16,7 @@ onMounted(async () => {
 }
 
 html {
-  font-family: "Poppins", sans-serif, -apple-system, BlinkMacSystemFont,
+  font-family: "Manrope", sans-serif, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
   font-size: 14px;
   word-spacing: 1px;
@@ -160,11 +143,17 @@ Vue Table
 }
 
 .main {
-  padding-left: 18rem;
+  padding-left: 14rem;
 }
 
 .container {
   max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 4rem;
+}
+
+.form-container {
+  max-width: 991px;
   margin: 0 auto;
   padding: 0 4rem;
 }
@@ -194,17 +183,17 @@ Vue Table
 }
 
 .text-primary {
-  color: #673ab7;
+  color: #0c1317;
 }
 .bg-primary {
-  background-color: #673ab7;
+  background-color: #0c1317;
 }
 .vs__selected-options {
   padding: 10px 6px !important;
 }
 
 .dp__input {
-  border: 2px solid #673ab7 !important;
+  border: 2px solid #0c1317 !important;
   padding: 12px 30px 10px 12px !important;
   border-radius: 10px !important;
 }
