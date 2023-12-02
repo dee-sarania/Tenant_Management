@@ -3,7 +3,7 @@
     <div class="form-container">
       <div class="mt-10 flex justify-between items-center">
         <div class="">
-          <NuxtLink to="/admin/tenants/">
+          <NuxtLink to="/tenants/complaints">
             <svg
               class="box-content -ml-4 w-6 h-6 p-4 mb-10 transition ease-in-out duration-400 hover:text-white cursor-pointer hover:bg-gray-700 rounded-full"
               fill="currentColor"

@@ -122,6 +122,13 @@ export default {
       isTenant: false,
     };
   },
+  watch: {
+    $route(to, from) {
+      if ("tenant" in localStorage) {
+        this.isTenant = true;
+      }
+    },
+  },
   mounted() {
     if ("tenant" in localStorage) {
       this.isTenant = true;
