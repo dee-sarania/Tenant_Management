@@ -15,10 +15,10 @@
     <div class="w-full mt-10">
       <div class="container flex justify-between items-center">
         <div class="">
-          <p class="text-primary text-4xl font-black">Tenant Complaints</p>
+          <p class="text-primary text-4xl font-black">Your Complaints</p>
         </div>
         <div>
-          <!-- <Button title="+ Add New Tenant" @onBtnClick="onBtnClick" /> -->
+          <Button title="+ Add New Complaint" @onBtnClick="onBtnClick" />
         </div>
       </div>
       <div class="container">
@@ -188,7 +188,7 @@ export default {
       this.GetAllTenants(this.limit, this.offset);
     },
     onBtnClick() {
-      this.$router.push("/admin/tenants/add");
+      this.$router.push("/tenants/complaints/add");
     },
     refresh() {
       this.GetAllTenants(this.limit, this.offset);
@@ -215,7 +215,7 @@ export default {
     },
     goTo(data) {
       console.log(data);
-      this.$router.push(`/admin/complaints/${data.data.id}`);
+      // this.$router.push(`/admin/tenants/edit/${data.data.id}`);
     },
     onDelete(id) {
       this.activeID = id;

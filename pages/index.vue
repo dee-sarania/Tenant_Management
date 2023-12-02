@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Login />
+    <LoginUser />
     <Wave class="fixed bottom-[-60px] left-0 right-0 pointer-events-none" />
   </div>
 </template>

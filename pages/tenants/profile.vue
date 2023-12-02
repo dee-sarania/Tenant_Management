@@ -3,24 +3,8 @@
     <div class="form-container">
       <div class="mt-10 flex justify-between items-center">
         <div class="w-full">
-          <div @click="goBack">
-            <svg
-              class="box-content -ml-4 w-6 h-6 p-4 mb-10 transition ease-in-out duration-400 hover:text-white cursor-pointer hover:bg-gray-700 rounded-full"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                clip-rule="evenodd"
-                fill-rule="evenodd"
-                d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
-              ></path>
-            </svg>
-          </div>
           <div class="flex justify-between items-center">
             <p class="dark:text-white text-4xl font-black">{{ data.name }}</p>
-            <Button title="Edit" @onBtnClick="onBtnClick" />
           </div>
         </div>
       </div>
@@ -145,14 +129,16 @@ export default {
       const _this = this;
       const db = useFirestore();
       try {
-        const tenantDoc = await getDoc(doc(db, "tenants", this.id));
+        const tenantDoc = await getDoc(
+          doc(db, "tenants", localStorage.getItem("tenant"))
+        );
         if (tenantDoc.exists()) {
           const tenantData = tenantDoc.data();
           // Now you can do something with the additional data from the "tenants" collection
           _this.data = tenantData;
           _this.data.id = tenantDoc.id;
         } else {
-          console.log("Tenant document not found for ID:", this.id);
+          console.log("Tenant document not found for ID:", docu.id);
         }
       } catch (error) {
         console.error("Error getting tenant document:", error);
@@ -194,9 +180,6 @@ export default {
     goTo(data) {
       console.log(data);
       this.$router.push(`/admin/tenants/edit/${data.data.id}`);
-    },
-    goBack() {
-      this.$router.back();
     },
     onDelete(id) {
       this.activeID = id;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Sidebar v-show="$route.name != 'index'" />
+    <Sidebar v-show="$route.name != 'index' && $route.name != 'admin'" />
     <NuxtPage />
     <!-- <button class="button"> click me</button> -->
     <!-- <button class="button" @click="signOut"> Sign out</button> -->
@@ -153,9 +153,10 @@ Vue Table
 }
 
 .form-container {
-  max-width: 991px;
+  max-width: 750px;
   margin: 0 auto;
   padding: 0 4rem;
+  width: 100%;
 }
 
 .vc-pane {

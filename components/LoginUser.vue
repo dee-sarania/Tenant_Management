@@ -4,7 +4,7 @@
       <div class="max-w-md -mt-16 w-full py-12 px-6 bg-white rounded-3xl">
         <img class="mx-auto h-10 object-contain" src="/logo.png" alt />
         <p class="mt-8 text-xl leading-5 text-center text-black font-bold">
-          Admin Dashboard
+          Tenants Dashboard
         </p>
         <div class="mt-5">
           <div class="error-section" v-if="isErrorOrSuccess == 'error'">
@@ -26,13 +26,13 @@
             <div class="rounded-md shadow-sm">
               <div class="pb-4">
                 <input
-                  aria-label="Email"
-                  name="email"
+                  aria-label="Phone Number"
+                  name="phoneNumber"
                   type="tel"
                   required
-                  v-model="email"
+                  v-model="phone_number"
                   class="border-gray-300 placeholder-gray-500 appearance-none rounded-lg relative block w-full px-4 py-6 bg-gray-300 text-gray-900 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 text-lg sm:leading-5"
-                  placeholder="Email"
+                  placeholder="Phone Number"
                   value
                 />
               </div>
@@ -111,12 +111,24 @@
 </template>
 
 <script>
+import {
+  collection,
+  query,
+  where,
+  doc,
+  startAfter,
+  getDoc,
+  getDocs,
+  limit,
+  deleteDoc,
+} from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 export default {
   data() {
     return {
       email: "admin@rentease.com",
       password: "Insert#123",
+      phone_number: "Insert#123",
       visible: false,
       isErrorOrSuccess: "",
       error_message: "",
@@ -129,19 +141,43 @@ export default {
 
   methods: {
     async authenticate() {
-      const auth = getAuth();
-      signInWithEmailAndPassword(auth, this.email, this.password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log("sucess");
-          this.$router.replace("/admin/tenants");
-          // ...
+      const _this = this;
+      const db = useFirestore();
+      const query1 = query(
+        collection(db, "tenants"),
+        where("phone_number", "==", this.phone_number)
+      );
+
+      getDocs(query1)
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            // Tenant with the specified phone number exists
+            querySnapshot.forEach((doc) => {
+              const tenantData = doc.data();
+              console.log("Tenant found:", tenantData);
+              localStorage.setItem("tenant", doc.id);
+              const auth = getAuth();
+              signInWithEmailAndPassword(auth, this.email, this.password)
+                .then((userCredential) => {
+                  // Signed in
+                  const user = userCredential.user;
+                  console.log("sucess");
+                  this.$router.replace("/tenants/profile");
+                  // ...
+                })
+                .catch((error) => {
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+                });
+            });
+          } else {
+            console.log("Tenant not found");
+          }
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
+          console.error("Error checking tenant:", error);
         });
+      // check tenant
     },
     async authenticateRest() {
       console.log("auth");

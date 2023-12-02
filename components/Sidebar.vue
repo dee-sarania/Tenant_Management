@@ -4,7 +4,51 @@
       <img class="w-36 object-contain invert" src="/logo.png" />
       <h1 class="text-white font-bold pl-1">Dashboard</h1>
     </div>
-    <div class="dashboard-links">
+    <div v-if="isTenant" class="dashboard-links">
+      <NuxtLink to="/tenants/profile">
+        <div class="link" :class="{ active: $route.path.includes('profile') }">
+          <svg
+            class="text-white w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z"
+            ></path>
+          </svg>
+          <p class="text-white px-3 font-semibold">Profile</p>
+        </div>
+      </NuxtLink>
+      <NuxtLink to="/tenants/complaints">
+        <div
+          class="link"
+          :class="{ active: $route.path.includes('complaints') }"
+        >
+          <svg
+            class="text-white w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              clip-rule="evenodd"
+              fill-rule="evenodd"
+              d="M4.606 12.97a.75.75 0 01-.134 1.051 2.494 2.494 0 00-.93 2.437 2.494 2.494 0 002.437-.93.75.75 0 111.186.918 3.995 3.995 0 01-4.482 1.332.75.75 0 01-.461-.461 3.994 3.994 0 011.332-4.482.75.75 0 011.052.134z"
+            ></path>
+            <path
+              clip-rule="evenodd"
+              fill-rule="evenodd"
+              d="M5.752 12A13.07 13.07 0 008 14.248v4.002c0 .414.336.75.75.75a5 5 0 004.797-6.414 12.984 12.984 0 005.45-10.848.75.75 0 00-.735-.735 12.984 12.984 0 00-10.849 5.45A5 5 0 001 11.25c.001.414.337.75.751.75h4.002zM13 9a2 2 0 100-4 2 2 0 000 4z"
+            ></path>
+          </svg>
+          <p class="text-white px-3 font-semibold">Complaints</p>
+        </div>
+      </NuxtLink>
+    </div>
+    <div v-else class="dashboard-links">
       <NuxtLink to="/admin/tenants">
         <div class="link" :class="{ active: $route.path.includes('tenants') }">
           <svg
@@ -49,7 +93,7 @@
       </NuxtLink>
     </div>
     <div class="absolute bottom-0 dashboard-links">
-      <NuxtLink to="/">
+      <NuxtLink to="/" @click="logout">
         <div class="link" :class="{ active: $route.path.includes('packages') }">
           <svg
             class="text-white w-6 h-6"
@@ -70,6 +114,26 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      isTenant: false,
+    };
+  },
+  mounted() {
+    if ("tenant" in localStorage) {
+      this.isTenant = true;
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("tenant");
+    },
+  },
+};
+</script>
 
 <style scoped>
 .dashboard {

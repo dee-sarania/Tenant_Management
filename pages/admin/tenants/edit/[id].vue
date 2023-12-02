@@ -132,6 +132,54 @@
             />
           </div>
         </div>
+        <div class="mb-16 mt-8">
+          <h3 class="font-black text-xl mb-5">Documents</h3>
+
+          <div class="grid grid-cols-3 gap-x-8 gap-y-4">
+            <div>
+              <p class="pb-2">Document 1</p>
+              <div v-if="data.document1">
+                <img
+                  @click="openFull(data.document1)"
+                  class="w-full h-72 object-cover mb-2 cursor-pointer"
+                  :src="data.document1"
+                />
+              </div>
+              <input
+                type="file"
+                @change="uploadDocument($event, 'document1')"
+              />
+            </div>
+            <div>
+              <p class="pb-2">Document 2</p>
+              <div v-if="data.document2">
+                <img
+                  @click="openFull(data.document2)"
+                  class="w-full h-72 object-cover mb-2 cursor-pointer"
+                  :src="data.document2"
+                />
+              </div>
+              <input
+                type="file"
+                @change="uploadDocument($event, 'document2')"
+              />
+            </div>
+            <div>
+              <p class="pb-2">Document 3</p>
+              <div v-if="data.document3">
+                <img
+                  @click="openFull(data.document3)"
+                  class="w-full h-72 object-cover mb-2 cursor-pointer"
+                  :src="data.document3"
+                />
+              </div>
+              <input
+                type="file"
+                @change="uploadDocument($event, 'document3')"
+              />
+            </div>
+          </div>
+        </div>
         <div class="max-w-md mt-10">
           <Button
             title="Update Tenant"
@@ -145,7 +193,9 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from "uuid";
 import { updateDoc, getDoc, doc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 export default {
   name: "my-component",
   data() {
@@ -172,6 +222,9 @@ export default {
         security_deposit: 0,
         movin_date: new Date(),
         address: "",
+        document1: "",
+        document2: "",
+        document3: "",
       },
       active: "all",
       data: {},
@@ -243,6 +296,27 @@ export default {
     onDelete(id) {
       this.activeID = id;
       this.showDeleteCategoryPopup = true;
+    },
+    uploadDocument(event, data) {
+      const _this = this;
+      const storage = getStorage();
+      const storageRef = ref(storage, uuidv4());
+
+      const file = event.target.files[0];
+      uploadBytes(storageRef, file).then((snapshot) => {
+        const { $toast } = useNuxtApp();
+        _this.data[
+          data
+        ] = `https://firebasestorage.googleapis.com/v0/b/${snapshot.metadata.bucket}/o/${snapshot.metadata.fullPath}?alt=media`;
+        $toast.success("Document uploaded");
+        console.log(snapshot);
+      });
+    },
+    openFull(data) {
+      window.open(
+        data,
+        "_blank" // <- This is what makes it open in a new window.
+      );
     },
   },
 };
