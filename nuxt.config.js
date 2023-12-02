@@ -35,6 +35,9 @@ export default defineNuxtConfig({
     auth: {
       enabled: true,
     },
+    emulators: {
+      enabled: false,
+    },
     config: {
       apiKey: "AIzaSyCiIyOYcT5KkcfJ_Vv6x8FT1KHne9diXeI",
       authDomain: "rentease-a00ae.firebaseapp.com",

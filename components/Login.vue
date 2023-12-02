@@ -115,8 +115,8 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 export default {
   data() {
     return {
-      email: "",
-      password: "",
+      email: "admin@rentease.com",
+      password: "Insert#123",
       visible: false,
       isErrorOrSuccess: "",
       error_message: "",

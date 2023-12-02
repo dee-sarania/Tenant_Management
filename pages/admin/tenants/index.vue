@@ -23,38 +23,9 @@
       </div>
       <div class="container">
         <div class="flex justify-between items-center mt-16">
-          <p class="text-primary text-xl mt-2 font-bold">{{ count }} Tenants</p>
-          <div>
-            <div class="flex items-center">
-              <div class="relative">
-                <TextInput
-                  label=""
-                  :initial="search"
-                  placeholder="Search Products"
-                  @setValue="setSearchTerm"
-                  class="mr-3"
-                  @keyup.enter="searchMember"
-                /><svg
-                  v-if="search != ''"
-                  class="absolute w-6 h-6 cursor-pointer top-0 bottom-0 m-auto right-5"
-                  @click="clearSearchTerms"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  ></path>
-                </svg>
-              </div>
-              <Button title="Search" @onBtnClick="searchMember" />
-            </div>
-          </div>
+          <p class="text-primary text-xl mt-2 font-bold">
+            {{ data.length }} Tenants
+          </p>
         </div>
         <MyTable
           :columns="columns"
@@ -82,7 +53,6 @@ import {
   limit,
   deleteDoc,
 } from "firebase/firestore";
-import { useFirestore } from "vuefire";
 export default {
   name: "my-component",
   data() {
@@ -138,6 +108,7 @@ export default {
       this.data = [];
       const _this = this;
       const db = useFirestore();
+      console.log(useCurrentUser());
       const citiesCollection = collection(db, "tenants");
 
       // Initial query to get the first page
@@ -233,7 +204,7 @@ export default {
     },
     goTo(data) {
       console.log(data);
-      this.$router.push(`/admin/tenants/edit/${data.data.id}`);
+      this.$router.push(`/admin/tenants/${data.data.id}`);
     },
     onDelete(id) {
       this.activeID = id;

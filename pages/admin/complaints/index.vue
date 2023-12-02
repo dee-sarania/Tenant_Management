@@ -24,39 +24,8 @@
       <div class="container">
         <div class="flex justify-between items-center mt-16">
           <p class="text-primary text-xl mt-2 font-bold">
-            {{ count }} Complaints
+            {{ data.length }} Complaints
           </p>
-          <div>
-            <div class="flex items-center">
-              <div class="relative">
-                <TextInput
-                  label=""
-                  :initial="search"
-                  placeholder="Search Products"
-                  @setValue="setSearchTerm"
-                  class="mr-3"
-                  @keyup.enter="searchMember"
-                /><svg
-                  v-if="search != ''"
-                  class="absolute w-6 h-6 cursor-pointer top-0 bottom-0 m-auto right-5"
-                  @click="clearSearchTerms"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  ></path>
-                </svg>
-              </div>
-              <Button title="Search" @onBtnClick="searchMember" />
-            </div>
-          </div>
         </div>
         <MyTable
           :columns="columns"
@@ -81,6 +50,7 @@ import {
   doc,
   startAfter,
   getDocs,
+  getDoc,
   limit,
   deleteDoc,
 } from "firebase/firestore";
@@ -100,7 +70,7 @@ export default {
       columns: [
         {
           label: "Name",
-          field: "name",
+          field: "tenantData.name",
           class: "capitalize",
         },
         {
@@ -152,9 +122,23 @@ export default {
             return;
           }
           // Process the documents from the initial query
-          querySnapshot.forEach((doc) => {
-            let data = doc.data();
-            data.id = doc.id;
+          querySnapshot.forEach(async (docu) => {
+            let data = docu.data();
+            data.id = docu.id;
+
+            try {
+              const tenantDoc = await getDoc(doc(db, "tenants", data.tenant));
+              if (tenantDoc.exists()) {
+                const tenantData = tenantDoc.data();
+                // Now you can do something with the additional data from the "tenants" collection
+                data.tenantData = tenantData;
+              } else {
+                console.log("Tenant document not found for ID:", docu.id);
+              }
+            } catch (error) {
+              console.error("Error getting tenant document:", error);
+            }
+
             _this.data.push(data);
           });
 

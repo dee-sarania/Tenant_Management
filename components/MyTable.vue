@@ -405,7 +405,7 @@ table tbody tr {
 }
 table thead {
   border-radius: 10px;
-  background-color: #6c5f55;
+  background-color: #0c1318;
   color: black;
 }
 table th:first-child {

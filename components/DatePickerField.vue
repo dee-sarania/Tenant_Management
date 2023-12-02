@@ -41,6 +41,11 @@ export default {
     DatePicker,
   },
   props: {
+    initial: {
+      type: String,
+      required: false,
+      default: new Date(),
+    },
     label: {
       type: String,
       required: true,
@@ -52,10 +57,16 @@ export default {
   },
   data() {
     return {
-      date: new Date(),
-      inputValue: moment().format("MMM, D YYYY"),
+      date: this.initial,
+      inputValue: moment(this.initial).format("MMM D, YYYY"),
       isDatePickerVisible: false,
     };
+  },
+  watch: {
+    initial(val) {
+      this.date = val;
+      this.inputValue = moment(this.date).format("MMM D, YYYY");
+    },
   },
   methods: {
     input() {},
@@ -69,7 +80,7 @@ export default {
       //     date: day.date,
       //   });
       // }
-      this.inputValue = moment(day.id, "YYYY-MM-DD").format("MMM, D YYYY");
+      this.inputValue = moment(day.id, "YYYY-MM-DD").format("MMM D, YYYY");
       this.isDatePickerVisible = false;
       this.$emit("setValue", {
         name: this.name,
